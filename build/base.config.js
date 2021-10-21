@@ -3,7 +3,8 @@ const { VueLoaderPlugin } = require('vue-loader')
 module.exports = {
     mode: 'development',
     output: {
-        filename: '[name].bundle.js'
+        filename: '[name].bundle.js',
+        publicPath:'/'
     },
     module: {
         rules: [

@@ -1,7 +1,8 @@
-const Vue = require('vue')
-const VueRouter = require('vue-router')
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 Vue.use(VueRouter)
-
+import About from '../views/About.vue'
+import Home from '../views/Home.vue'
 
 function createRouter() {
     return new VueRouter({
@@ -9,11 +10,15 @@ function createRouter() {
         routes: [
             {
                 path: '/about',
-                component: { template: '<div>about page</div>' }
+                component: About
+            },
+            {
+                path: '/',
+                component: Home
             }
         ]
     })
 }
 
 
-module.exports = createRouter
+export default createRouter
