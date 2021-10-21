@@ -1,12 +1,6 @@
-const createApp = require('./app.js')
+import createApp from './app.js'
 
-
-module.exports = ctx => {
-    return new Promise((resolve, reject) => {
-        const { app, router } = createApp(ctx)
-        router.push(ctx.url)
-        router.onReady(() => {
-            resolve(app)
-        })
-    })
+export default () => {
+    const app = createApp()
+    return app
 }

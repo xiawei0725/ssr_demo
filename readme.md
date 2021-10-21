@@ -120,3 +120,58 @@ app.listen(3000)
 ### 工程化解决
 
 要像平时开发项目一样来做的话，肯定少了不`webpack`打包等等一系列的依赖，在开始之前先安装一下依赖吧！
+
+```bash
+yarn add webpack webpack-cli vue-loader vue-template-compiler vue-style-loader css-loader babel-loader @babel/core @babel/preset-env webpack-merge -D
+```
+安装完依赖以后我们先在根目录下创建一个build文件夹用于存放我们的webpack构建配置文件，并且先创建好三个文件：
+- build/base.config.js
+- build/client.config.js
+- build/server.config.js
+
+前面基础部分很明显只是解决了服务端的部分问题，怎么保证后端输出后前端能交互以及代码复用和工程化构建都没有解决。先不慌编写打包构建的配置，先来分别给服务端和客户端编写入口文件，先来看一张图：
+![ssr](https://cloud.githubusercontent.com/assets/499550/17607895/786a415a-5fee-11e6-9c11-45a2cfdf085c.png)
+
+由于服务端进程常驻内存的特点，为了避免交叉请求状态污染，我们需要避免单例，所以通用代码`app.js` 如下：
+
+```js
+const Vue = require('vue')
+
+module.exports = function () {
+    const app = new Vue({
+        data: {
+            count: 1
+        },
+        template: `<div>
+            <button @click="count++">{{count}}</button>
+        </div>`,
+    })
+    return app
+}
+```
+
+此时还没有用到`webpack`，现在直接用`commonjs`来编写代码，那么对应的`server.js`就变成下面这样:
+```js
+const express = require('express')
+const Vue = require('vue')
+const template = require('fs').readFileSync('./index.html', 'utf-8')
+const renderer = require('vue-server-renderer').createRenderer({
+    template
+})
+const app = express()
+
+app.get('*', async (req, res) => {
+    const createApp = require('./src/app.js')
+    renderer.renderToStream(createApp(), {
+        title: 'hello vue ssr'
+    }).pipe(res)
+})
+
+app.listen(3000)
+```
+
+但是啊但是，现在还没用到webpack，这样我们没法还好发挥啊 ，肯定不符合前端仔的风格，对吧！下面我们来分别编写客户端和服务端的入口文件，顺便也改造成`esmodule`
+app.js
+client_entry.js
+server_entry.js
+编写完了，那么现在`server.js`没法直接用源码文件了，所以再编写打包配置来打包来丰富项目的能力

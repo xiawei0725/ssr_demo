@@ -7,13 +7,8 @@ const renderer = require('vue-server-renderer').createRenderer({
 const app = express()
 
 app.get('*', async (req, res) => {
-    const vm = new Vue({
-        template: `<button @click="count++">{{count}}</button>`,
-        data: {
-            count: 1
-        },
-    })
-    renderer.renderToStream(vm, {
+    const createApp = require('./src/app.js')
+    renderer.renderToStream(createApp(), {
         title: 'hello vue ssr'
     }).pipe(res)
 })

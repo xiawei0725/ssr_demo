@@ -1,15 +1,9 @@
-const Vue = require('vue')
+import Vue from 'vue'
+import App from './App.vue'
 
 module.exports = function () {
     const app = new Vue({
-        router,
-        data: {
-            count: 1
-        },
-        template: `<div>
-            <button @click="count++">{{count}}</button>
-            <router-view></router-view>
-        </div>`,
+        render: h => h(App)
     })
     return app
 }
